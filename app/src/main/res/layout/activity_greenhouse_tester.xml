@@ -12,10 +12,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Include here  -->
-        <!-- Ventoinha -->
+        <!-- Include here  -->      
         <include android:id="@+id/ventoinhaItem" layout="@layout/activity_greenhouse_tester_item" />
         <include android:id="@+id/exaustorItem" layout="@layout/activity_greenhouse_tester_item" />
+        <include android:id="@+id/iluminacaoItem" layout="@layout/activity_greenhouse_tester_item" />
+        <include android:id="@+id/pumpItem" layout="@layout/activity_greenhouse_tester_item" />
+        <include android:id="@+id/umidificadorItem" layout="@layout/activity_greenhouse_tester_item" />
 
     </LinearLayout>
 
