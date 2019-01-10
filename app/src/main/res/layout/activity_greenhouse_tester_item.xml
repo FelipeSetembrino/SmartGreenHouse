@@ -30,7 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:thumbTint="@color/colorPrimaryDark"
+            android:switchMinWidth="60dp"
+            android:thumbTint="@color/colorPatternGreen"
+            android:track="@drawable/custom_switch"
             />
 
     </RelativeLayout>
