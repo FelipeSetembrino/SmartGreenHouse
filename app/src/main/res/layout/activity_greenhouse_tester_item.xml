@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:textStyle="bold"
             android:textSize="20dp" />
 
     </RelativeLayout>
@@ -31,8 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:switchMinWidth="60dp"
-            android:thumbTint="@color/colorPatternGreen"
-            android:track="@drawable/custom_switch"
+            android:scaleX="1.1"
+            android:scaleY="1.3"
+            android:theme="@style/SwitchTheme"
             />
 
     </RelativeLayout>
