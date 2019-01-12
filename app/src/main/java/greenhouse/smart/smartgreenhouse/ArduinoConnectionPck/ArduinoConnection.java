@@ -2,14 +2,22 @@ package greenhouse.smart.smartgreenhouse.ArduinoConnectionPck;
 
 import android.app.PendingIntent;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.util.Log;
+import android.widget.TextView;
 
+import com.felhr.usbserial.UsbSerialDevice;
+import com.felhr.usbserial.UsbSerialInterface;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 
 /**
@@ -22,6 +30,8 @@ public class ArduinoConnection {
     private UsbManager usbManager;
     private UsbDevice device;
     private UsbDeviceConnection connection;
+    private UsbSerialDevice serialPort;
+
     private final String ACTION_USB_PERMISSION = "USB_PERMISSION";
     private HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
 
@@ -51,6 +61,76 @@ public class ArduinoConnection {
         }
     }
 
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
+                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                if (granted) {
+                    connection = usbManager.openDevice(device);
+                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
+                    if (serialPort != null) {
+                        if (serialPort.open()) { //Set Serial Connection Parameters.
+                            setUiEnabled(true);
+                            serialPort.setBaudRate(9600);
+                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
+                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
+                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                            serialPort.read(mCallback);
+                            tvAppend(textView,"Serial Connection Opened!\n");
+
+                        } else {
+                            Log.d("SERIAL", "PORT NOT OPEN");
+                        }
+                    } else {
+                        Log.d("SERIAL", "PORT IS NULL");
+                    }
+                } else {
+                    Log.d("SERIAL", "PERM NOT GRANTED");
+                }
+            } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+                onClickStart(startButton);
+            } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
+                onClickStop(stopButton);
+
+            }
+        }
+        };
+
+    public void setUiEnabled(boolean bool) {
+        startButton.setEnabled(!bool);
+        sendButton.setEnabled(bool);
+        stopButton.setEnabled(bool);
+        textView.setEnabled(bool);
+    }
+
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
+        @Override
+        public void onReceivedData(byte[] arg0) {
+            String data = null;
+            try {
+                data = new String(arg0, "UTF-8");
+                data.concat("/n");
+                tvAppend(textView, data);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
+    private void tvAppend(TextView tv, CharSequence text) {
+        final TextView ftv = tv;
+        final CharSequence ftext = text;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ftv.append(ftext);
+            }
+        });
+    }
 }
 
 /*Exemplo
