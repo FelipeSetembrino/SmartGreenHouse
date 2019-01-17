@@ -37,7 +37,7 @@ public class ArduinoConnection {
 
     }
 
-    public void setConnection() {
+    private void setConnection() {
         usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
 
@@ -71,5 +71,74 @@ public class ArduinoConnection {
             builder1.show();
         }
     }
+
+    private void setSerialPort(){
+        connection = usbManager.openDevice(device);
+        serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
+    }
+
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
+                boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                if (granted) {
+                    setSerialPort();
+                    if (serialPort != null) {
+                        if (serialPort.open()) { //Set Serial Connection Parameters.
+                            serialPort.setBaudRate(9600);
+                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
+                            serialPort.setParity(UsbSerialInterface.PARITY_NONE);
+                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                        } else {
+                            builder1.setMessage("PORT NOT OPEN");
+                            builder1.show();
+                            //Log.d("SERIAL", "PORT NOT OPEN");
+                        }
+                    } else {
+                        builder1.setMessage("PORT WITHOUT ARDUINO");
+                        builder1.show();
+                        //Log.d("SERIAL", "PORT IS NULL");
+                    }
+                } else {
+                    builder1.setMessage("PERM NOT GRANTED");
+                    builder1.show();
+                    //Log.d("SERIAL", "PERM NOT GRANTED");
+                }
+            } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+                setConnection();
+            } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
+                // onClickStop(stopButton);
+
+            }
+        }
+    };
+
+    public void setArduinoData(String data){
+        serialPort.write(data.getBytes());
+    }
+
+    public String getArduinoData(){
+        serialPort.read(mCallback);
+        return mCallback.toString();
+    }
+
+    UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
+        String data = null;
+        @Override
+        public void onReceivedData(byte[] arg0) {
+            try {
+                data = new String(arg0, "UTF-8");
+                data.concat("/n");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public String toString(){
+            return data;
+        }
+    };
 
 }
