@@ -18,7 +18,7 @@ public class ConnectionArduinoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connection_arduino);
 
         arduinoConnection = new ArduinoConnection(this);
-        arduinoConnection.setConnection();
+        //arduinoConnection.setConnection();
 
     }
 

@@ -2,6 +2,7 @@ package greenhouse.smart.smartgreenhouse.ArduinoConnectionPck;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,6 +11,10 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+import com.felhr.usbserial.UsbSerialDevice;
+import com.felhr.usbserial.UsbSerialInterface;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +26,7 @@ public class ArduinoConnection {
     private UsbDeviceConnection connection;
     private final String ACTION_USB_PERMISSION = "USB_PERMISSION";
     private HashMap<String, UsbDevice> usbDevices;
+    private UsbSerialDevice serialPort;
 
     AlertDialog.Builder builder1;
 
@@ -32,6 +38,7 @@ public class ArduinoConnection {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
 //        registerReceiver(broadcastReceiver, filter);
+
 
         builder1 = new AlertDialog.Builder(context);
 
