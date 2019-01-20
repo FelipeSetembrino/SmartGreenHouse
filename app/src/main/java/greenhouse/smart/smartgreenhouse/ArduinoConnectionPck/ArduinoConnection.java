@@ -37,14 +37,12 @@ public class ArduinoConnection {
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-//        registerReceiver(broadcastReceiver, filter);
-
-
+        context.registerReceiver(broadcastReceiver, filter);
         builder1 = new AlertDialog.Builder(context);
 
     }
 
-    private void setConnection() {
+    public void setConnection() {
         usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
 
@@ -122,13 +120,28 @@ public class ArduinoConnection {
         }
     };
 
+    public void startConnection(){
+        //broadcastReceiver.onReceive(context, Intent.parseIntent());
+    }
+
     public void setArduinoData(String data){
-        serialPort.write(data.getBytes());
+        try {
+            serialPort.write(data.getBytes());
+        } catch (Exception e){
+            builder1.setMessage(e.getMessage());
+            builder1.show();
+        }
     }
 
     public String getArduinoData(){
-        serialPort.read(mCallback);
-        return mCallback.toString();
+        try {
+            serialPort.read(mCallback);
+            return mCallback.toString();
+        } catch (Exception e){
+            builder1.setMessage(e.getMessage());
+            builder1.show();
+            return "Error";
+        }
     }
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
