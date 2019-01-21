@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Button buttonConnectionArduino = (Button) findViewById(R.id.buttonConnectionArduino);
         buttonConnectionArduino.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,ConnectionArduinoActivity.class));
+                startActivity(new Intent(MainActivity.this,ActivityConnectionArduinoWrite.class));
             }
         });
 

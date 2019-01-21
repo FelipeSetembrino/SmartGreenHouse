@@ -16,9 +16,10 @@ public class ConnectionArduinoActivity extends AppCompatActivity {
 
     ArduinoConnection arduinoConnection;
     TextView textViewTestConnection;
-    Button buttonTestConnection, buttonTestLer;
+    Button buttonTestConnection, buttonTestLer, buttonClose;
+    String testDataReceived = "";
 
-    AlertDialog.Builder builder1;
+    private AlertDialog.Builder builder1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,8 @@ public class ConnectionArduinoActivity extends AppCompatActivity {
         textViewTestConnection = (TextView) findViewById(R.id.textViewTestConnection);
         buttonTestConnection = (Button) findViewById(R.id.buttonTestConnection);
         buttonTestLer = (Button) findViewById(R.id.buttonTestReturn);
+        buttonClose = (Button) findViewById(R.id.buttonTestClose);
+        builder1 = new AlertDialog.Builder(this);
 
         arduinoConnection = new ArduinoConnection(this);
         arduinoConnection.setConnection();
@@ -36,16 +39,23 @@ public class ConnectionArduinoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 arduinoConnection.setArduinoData("OK");
-                String test = arduinoConnection.getArduinoData();
-                textViewTestConnection.setText(test);
+                testDataReceived = arduinoConnection.getArduinoData();
+                textViewTestConnection.setText(testDataReceived);
             }
         });
 
         buttonTestLer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String test = arduinoConnection.getArduinoData();
-                textViewTestConnection.setText(test);
+                testDataReceived = arduinoConnection.getArduinoData();
+                textViewTestConnection.setText(testDataReceived);
+            }
+        });
+
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                arduinoConnection.closeConection();
             }
         });
 

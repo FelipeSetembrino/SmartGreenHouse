@@ -27,6 +27,7 @@ public class ArduinoConnection {
     private final String ACTION_USB_PERMISSION = "USB_PERMISSION";
     private HashMap<String, UsbDevice> usbDevices;
     private UsbSerialDevice serialPort;
+    private String data = null;
 
     AlertDialog.Builder builder1;
 
@@ -96,6 +97,11 @@ public class ArduinoConnection {
                             serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1);
                             serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+                            //Teste leitura
+//                            serialPort.read(mCallback);
+//                            builder1.setMessage(data);
+//                            builder1.show();
+
                         } else {
                             builder1.setMessage("PORT NOT OPEN");
                             builder1.show();
@@ -114,7 +120,7 @@ public class ArduinoConnection {
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                 setConnection();
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
-                // onClickStop(stopButton);
+                closeConection();
 
             }
         }
@@ -122,6 +128,12 @@ public class ArduinoConnection {
 
     public void startConnection(){
         //broadcastReceiver.onReceive(context, Intent.parseIntent());
+    }
+
+    public void closeConection(){
+        serialPort.close();
+        builder1.setMessage("Conexão finalizada");
+        builder1.show();
     }
 
     public void setArduinoData(String data){
@@ -136,7 +148,7 @@ public class ArduinoConnection {
     public String getArduinoData(){
         try {
             serialPort.read(mCallback);
-            return mCallback.toString();
+            return data;
         } catch (Exception e){
             builder1.setMessage(e.getMessage());
             builder1.show();
@@ -145,19 +157,17 @@ public class ArduinoConnection {
     }
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
-        String data = null;
+//        String data = null;
         @Override
         public void onReceivedData(byte[] arg0) {
             try {
                 data = new String(arg0, "UTF-8");
-                data.concat("/n");
+//                builder1.setMessage(data);
+//                builder1.show();
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                builder1.setMessage(e.getMessage());
+                builder1.show();
             }
-        }
-        @Override
-        public String toString(){
-            return data;
         }
     };
 
