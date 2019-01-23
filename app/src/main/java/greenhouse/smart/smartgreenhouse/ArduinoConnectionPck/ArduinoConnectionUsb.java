@@ -120,12 +120,24 @@ public class ArduinoConnectionUsb {
         }
     }
 
-    private void sendCommand(int control) {
+    public void sendCommand(int control) {
         synchronized (this) {
 
             if (usbDeviceConnection != null) {
                 byte[] message = new byte[1];
                 message[0] = (byte)control;
+                usbDeviceConnection.bulkTransfer(endpointOut,
+                        message, message.length, 0);
+            }
+        }
+    }
+
+    public void sendData(String control) {
+        synchronized (this) {
+
+            if (usbDeviceConnection != null) {
+                byte[] message;
+                message = control.getBytes();
                 usbDeviceConnection.bulkTransfer(endpointOut,
                         message, message.length, 0);
             }

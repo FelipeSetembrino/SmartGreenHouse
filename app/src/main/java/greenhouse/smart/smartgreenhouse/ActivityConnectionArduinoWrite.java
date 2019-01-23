@@ -2,6 +2,7 @@ package greenhouse.smart.smartgreenhouse;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -22,7 +23,19 @@ public class ActivityConnectionArduinoWrite extends AppCompatActivity implements
          buttonSend = (Button) findViewById(R.id.buttonSend);
 
         arduinoConnectionUsb = new ArduinoConnectionUsb(this);
+        arduinoConnectionUsb.setConnection(getIntent());
 
+        buttonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendData(editText.getText().toString());
+            }
+        });
+
+    }
+
+    public void sendData(String data){
+        arduinoConnectionUsb.sendData(data);
     }
 
     @Override
