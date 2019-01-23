@@ -1,5 +1,7 @@
 package greenhouse.smart.smartgreenhouse.ArduinoConnectionPck;
 
+import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbConstants;
@@ -11,8 +13,8 @@ import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
 
 import java.nio.ByteBuffer;
-
-import greenhouse.smart.smartgreenhouse.ActivityConnectionArduinoWrite;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ArduinoConnectionUsb {
 
@@ -21,27 +23,69 @@ public class ArduinoConnectionUsb {
     private UsbEndpoint endpointOut = null;
     private UsbEndpoint endpointIn = null;
     private UsbManager usbManager;
-    private UsbDevice deviceFound;
+    private HashMap<String, UsbDevice> usbDevices;
     private UsbDeviceConnection usbDeviceConnection;
+    private UsbDevice device;
+    private final String ACTION_USB_PERMISSION = "USB_PERMISSION";
+    private UsbDeviceConnection connection;
+    private AlertDialog.Builder alertDialog;
+
 
     public ArduinoConnectionUsb(Context context){
         this.context = context;
+        usbManager = (UsbManager) context.getSystemService(context.USB_SERVICE);
+        alertDialog = new AlertDialog.Builder(context);
     }
 
-    public void setConnection(Intent intentParam) {
 
-        Intent intent = intentParam;
-        String action = intent.getAction();
+    public void setConnection() {
+        usbDevices = usbManager.getDeviceList();
+        if (!usbDevices.isEmpty()) {
 
-        UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-        if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-            setDevice(device);
-        } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-            if (deviceFound != null && deviceFound.equals(device)) {
-                setDevice(null);
+            boolean keep = true;
+            for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
+                device = entry.getValue();
+                int deviceVID = device.getVendorId();
+                //Arduino Vendor ID 0x2341
+                if (deviceVID == 0x2341){
+
+                    alertDialog.setMessage("Welcome to SmartGreenHouse!");
+                    alertDialog.show();
+
+                    PendingIntent pi = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                    usbManager.requestPermission(device, pi);
+                    keep = false;
+
+                    setDevice(device);
+                }
+                else {
+                    connection = null;
+                    device = null;
+                }
+                if (!keep)
+                    break;
             }
         }
+        else {
+            alertDialog.setMessage("Error! SmartGreenHouse not found!");
+            alertDialog.show();
+        }
     }
+
+//    public void setConnection(Intent intentParam) {
+//
+//        Intent intent = intentParam;
+//        String action = intent.getAction();
+//
+//        UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+//        if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+//            setDevice(device);
+//        } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+//            if (usbDevices != null && usbDevices.equals(device)) {
+//                setDevice(null);
+//            }
+//        }
+//    }
 
     private void setDevice(UsbDevice device) {
         usbInterfaceFound = null;
@@ -80,8 +124,6 @@ public class ArduinoConnectionUsb {
         if (usbInterfaceFound == null) {
             return;
         }
-
-        deviceFound = device;
 
         if (device != null) {
             UsbDeviceConnection connection =

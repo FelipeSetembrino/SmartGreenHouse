@@ -23,7 +23,7 @@ public class ActivityConnectionArduinoWrite extends AppCompatActivity implements
          buttonSend = (Button) findViewById(R.id.buttonSend);
 
         arduinoConnectionUsb = new ArduinoConnectionUsb(this);
-        arduinoConnectionUsb.setConnection(getIntent());
+        //arduinoConnectionUsb.setConnection();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +41,7 @@ public class ActivityConnectionArduinoWrite extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        arduinoConnectionUsb.setConnection(getIntent());
+        arduinoConnectionUsb.setConnection();
     }
 
     @Override
