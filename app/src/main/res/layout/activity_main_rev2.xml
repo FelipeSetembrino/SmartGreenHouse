@@ -21,7 +21,7 @@
 
             <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/border_left_main_activity">
 
                     <include android:id="@+id/activity_connected_greenhouse" layout="@layout/main_activity_item" />
@@ -30,7 +30,7 @@
 
             <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/border_right_main_activity">
 
                 <include android:id="@+id/activity_grow_type" layout="@layout/main_activity_item" />
@@ -47,7 +47,7 @@
 
             <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/border_left_main_activity">
 
                 <include android:id="@+id/activity_set_grow" layout="@layout/main_activity_item" />
@@ -56,7 +56,7 @@
 
             <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/border_right_main_activity">
 
                     <include android:id="@+id/activity_tester" layout="@layout/main_activity_item" />

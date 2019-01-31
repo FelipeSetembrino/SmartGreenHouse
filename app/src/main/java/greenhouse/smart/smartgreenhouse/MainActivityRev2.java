@@ -22,7 +22,7 @@ public class MainActivityRev2 extends AppCompatActivity {
         itemConnectionImg = (ImageView) itemConnection.findViewById(R.id.imageItemMainActivity);
         itemConnectionText = (TextView) itemConnection.findViewById(R.id.textItemMainActivity);
         itemConnectionImg.setBackgroundResource(R.drawable.connect_icon);
-        itemConnectionText.setText("Connect to Smart Green House");
+        itemConnectionText.setText("Connect");
 
         itemCalibration= (LinearLayout) findViewById(R.id.activity_tester);
         itemCalibrationImg = (ImageView) itemCalibration.findViewById(R.id.imageItemMainActivity);
